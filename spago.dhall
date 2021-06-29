@@ -1,9 +1,14 @@
-{ name =
-    "my-project"
+{ name = "my-project"
 , dependencies =
-    [ "console", "effect", "prelude", "psci-support", "optparse" ]
-, packages =
-    ./packages.dhall
-, sources =
-    [ "src/**/*.purs" ]
+  [ "aff"
+  , "console"
+  , "effect"
+  , "foldable-traversable"
+  , "httpure"
+  , "optparse"
+  , "prelude"
+  , "psci-support"
+  ]
+, packages = ./packages.dhall
+, sources = [ "src/**/*.purs" ]
 }
