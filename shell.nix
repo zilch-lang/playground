@@ -8,7 +8,13 @@ pkgs.mkShell {
     purescript
     spago
 
+    dhall
+
     nodejs
     nodePackages.npm
   ];
+
+  shellHook = ''
+    export PATH="$(${pkgs.nodePackages.npm}/bin/npm config get prefix)/bin:$PATH"
+  '';
 }
