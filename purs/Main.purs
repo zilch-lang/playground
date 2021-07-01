@@ -18,7 +18,11 @@ import Node.FS.Aff as FS
 
 import Node.Encoding as Encoding
 
-import Data.Array (null, (:))
+import Data.Array (null, (:), tail)
+
+import Data.Maybe (fromJust)
+
+import Partial.Unsafe (unsafePartial)
 
 
 
@@ -56,18 +60,34 @@ runServer { port } = HTTPure.serve port serverHandler do
 -- | Handles requests coming to the server.
 serverHandler :: HTTPure.Request -> HTTPure.ResponseM
 serverHandler { method: HTTPure.Get, path }
-  | null path            = FS.readTextFile Encoding.UTF8 "./src/html/index.html" >>= HTTPure.ok
+  | null path            = FS.readTextFile Encoding.UTF8 "./html/index.html" >>= HTTPure.ok
   | path !@ 0 == "js" ||
     path !@ 0 == "css"   = uploadJSorCSS path
+  | path !@ 0 == "png"   = uploadPNG path
 serverHandler _          = HTTPure.notFound
 
+
+
+-- | Uploads either a JS or CSS file.
 uploadJSorCSS :: Array String -> HTTPure.ResponseM
 uploadJSorCSS path = do
-  let realPath = intercalate "/" $ "." : "src" : path
+  let realPath = intercalate "/" $ "." : path
   fileExists <- FS.exists realPath
 
   let headers = HTTPure.header "Content-Type" $
                   if path !@ 0 == "js" then "text/javascript" else "text/css"
+
+  if fileExists
+  then FS.readTextFile Encoding.UTF8 realPath >>= HTTPure.ok' headers
+  else HTTPure.notFound
+
+-- | Uploads a SVG file
+uploadPNG :: Array String -> HTTPure.ResponseM
+uploadPNG path = do
+  let realPath = intercalate "/" $ "." : "assets" : unsafePartial (fromJust $ tail path)
+  fileExists <- FS.exists realPath
+
+  let headers = HTTPure.header "Content-Type" "image/png"
 
   if fileExists
   then FS.readTextFile Encoding.UTF8 realPath >>= HTTPure.ok' headers
