@@ -1,0 +1,62 @@
+:root {
+    --tab-bar-height: 32px;
+    --tab-bar-margin: 5px;
+}
+
+html {
+    height: 100%;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: calc(100% - var(--tab-bar-margin));
+}
+
+a {
+    font-family: "Open Sans";
+}
+
+#tabs {
+    padding: var(--tab-bar-margin);
+    height: calc(var(--tab-bar-height) + 2 * var(--tab-bar-margin));
+
+    border-bottom: 1px solid rgb(236, 236, 236);
+
+    display: flex;
+}
+
+div > a#run {
+    margin-left: auto;
+}
+
+#editor {
+    position: relative;
+
+    height: calc(100% - 1px);
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+#editor-view {
+    margin-right: 5px;
+}
+
+#editor > * {
+    position: relative;
+}
+
+.tab-padding {
+    flex-grow: 3;
+}
+
+/*
+#run-button {
+    float: right;
+}
+*/

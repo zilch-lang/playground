@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>Zilch playground</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
+        <link rel="stylesheet" href="/css/index.css"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700%7CSource+Code+Pro:400,700&amp;subset=latin-ext">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div id="tabs">
+            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9" href="#">
+                <i class="fa fa-keyboard-o dib"></i>
+                <span class="f6 ml2">EDITOR</span>
+            </a>
+            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-blue inline-flex items-center tc br2 fw9" href="#">
+                <i class="fa fa-gear dib"></i>
+                <span class="f6 ml2">COMPILER VIEW</span>
+            </a>
+            <div class="tab-padding"></div>
+            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9" href="#" id="run-button">
+                <i class="fa fa-play-circle dib"></i>
+                <span class="f6 ml2">RUN</span>
+            </a>
+        </div>
+        <div style="height: calc(100% - var(--tab-bar-height) - var(--tab-bar-margin));">
+            <span id="code-editor-tab">
+                <div id="editor">Hello</div>
+            </span>
+            <span id="debug-tab"></span>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.0/prism.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
+        <script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
+        <script defer type="module" src="/js/index.js"></script>
+    </body>
+</html>
