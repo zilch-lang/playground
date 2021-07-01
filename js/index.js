@@ -37,8 +37,15 @@ document.addEventListener('DOMContentLoaded', e => {
 //    minSizes: [200, 100],
 //  })
 
-  flask = new CodeFlask('#editor', {
-    language: 'js',
+  flask = CodeMirror(document.querySelector('#editor'), {
+    mode: "haskell",
     lineNumbers: true,
+    indentUnit: 2,
+    tabSize: 2,
+    lineWrapping: true,
+    spellcheck: false,
+    autocorrect: false,
+    autocomplete: false,
+    theme: 'xq-light',
   })
 }, false);

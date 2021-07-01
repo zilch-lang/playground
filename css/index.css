@@ -37,24 +37,31 @@ div > a#run {
     margin-left: auto;
 }
 
-#editor {
+.CodeMirror-wrap {
     position: relative;
 
-    height: calc(100% - 1px);
+    height: 100% !important;
     width: 100%;
 
     margin: 0;
-    padding: 5px;
+    padding: 0;
+
+    resize: none;
+
+    box-shadow: 3px 3px 3px #b3b3b3, -3px -3px 3px #b3b3b3;
+}
+
+.CodeMirror-lines {
+    margin-left: 4px;
+    margin-right: 4px;
 }
 
 #editor-view {
     margin-right: 5px;
 }
 
-#editor > div.codeflask {
+.codejar-wrap {
     position: relative;
-
-    box-shadow: 3px 3px 3px #b3b3b3, -3px -3px 3px #b3b3b3;
 }
 
 .tab-padding {
@@ -65,8 +72,17 @@ div > a#run {
     height: 100%;
 }
 
-/*
-#run-button {
-    float: right;
+#editor, .CodeMirror-linenumbers {
+    font-family: 'Source Code Pro', monospace !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    height: 100%;
+    letter-spacing: normal !important;
+    line-height: 20px !important;
+    tab-size: 2;
+    padding: 5px;
 }
-*/
+
+#editor {
+    resize: none !important;
+}
