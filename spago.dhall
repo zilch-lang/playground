@@ -1,14 +1,20 @@
-{ name = "my-project"
+{ name =
+    "my-project"
 , dependencies =
-  [ "aff"
-  , "console"
-  , "effect"
-  , "foldable-traversable"
-  , "httpure"
-  , "optparse"
-  , "prelude"
-  , "psci-support"
-  ]
-, packages = ./packages.dhall
-, sources = [ "src/**/*.purs" ]
+    [ "aff"
+    , "arrays"
+    , "console"
+    , "effect"
+    , "foldable-traversable"
+    , "httpure"
+    , "node-buffer"
+    , "node-fs-aff"
+    , "optparse"
+    , "prelude"
+    , "psci-support"
+    ]
+, packages =
+    ./packages.dhall
+, sources =
+    [ "src/**/*.purs" ]
 }
