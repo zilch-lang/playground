@@ -10,26 +10,26 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     </head>
     <body>
-        <div id="tabs">
-            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9" href="#">
+        <div id="tabs" class="bg-purple">
+            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9">
                 <i class="fa fa-keyboard-o dib"></i>
                 <span class="f6 ml2">EDITOR</span>
             </a>
-            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-blue inline-flex items-center tc br2 fw9" href="#">
+            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9">
                 <i class="fa fa-gear dib"></i>
                 <span class="f6 ml2">COMPILER VIEW</span>
             </a>
             <div class="tab-padding"></div>
-            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9" href="#" id="run-button">
+            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9">
                 <i class="fa fa-play-circle dib"></i>
                 <span class="f6 ml2">RUN</span>
             </a>
         </div>
         <div style="height: calc(100% - var(--tab-bar-height) - var(--tab-bar-margin));">
-            <span id="code-editor-tab">
+            <span id="code-editor-tab" class="tab-view db">
                 <div id="editor">Hello</div>
             </span>
-            <span id="debug-tab"></span>
+            <span id="debug-tab" class="tab-view dn"></span>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.0/prism.min.js"></script>

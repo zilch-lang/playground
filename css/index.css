@@ -24,9 +24,13 @@ a {
     padding: var(--tab-bar-margin);
     height: calc(var(--tab-bar-height) + 2 * var(--tab-bar-margin));
 
-    border-bottom: 1px solid rgb(236, 236, 236);
-
     display: flex;
+
+    transition: background-color .1s ease-in;
+}
+
+#tabs > a {
+    cursor: pointer;
 }
 
 div > a#run {
@@ -40,19 +44,25 @@ div > a#run {
     width: 100%;
 
     margin: 0;
-    padding: 0;
+    padding: 5px;
 }
 
 #editor-view {
     margin-right: 5px;
 }
 
-#editor > * {
+#editor > div.codeflask {
     position: relative;
+
+    box-shadow: 3px 3px 3px #b3b3b3, -3px -3px 3px #b3b3b3;
 }
 
 .tab-padding {
     flex-grow: 3;
+}
+
+.tab-view {
+    height: 100%;
 }
 
 /*
