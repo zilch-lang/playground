@@ -1,6 +1,6 @@
 module Main where
 
-import Prelude (($), show, (=<<), map)
+import Prelude
 
 import Effect.Console as Console
 
@@ -8,10 +8,17 @@ import Options.Applicative ( Parser, option, int, long, short, metavar, help
                            , showDefault, value, execParser, info, helper
                            , fullDesc, progDesc, (<**>) )
 
-import Data.Foldable (fold)
+import Data.Foldable (fold, intercalate)
 import Data.Semigroup ((<>))
 
+import HTTPure ((!@))
 import HTTPure as HTTPure
+
+import Node.FS.Aff as FS
+
+import Node.Encoding as Encoding
+
+import Data.Array (null, (:))
 
 
 
@@ -48,6 +55,20 @@ runServer { port } = HTTPure.serve port serverHandler do
 
 -- | Handles requests coming to the server.
 serverHandler :: HTTPure.Request -> HTTPure.ResponseM
-serverHandler { method: HTTPure.Get, path: [] } = do
-  HTTPure.ok "Hello, world!"
-serverHandler _ = HTTPure.notFound
+serverHandler { method: HTTPure.Get, path }
+  | null path            = FS.readTextFile Encoding.UTF8 "./src/html/index.html" >>= HTTPure.ok
+  | path !@ 0 == "js" ||
+    path !@ 0 == "css"   = uploadJSorCSS path
+serverHandler _          = HTTPure.notFound
+
+uploadJSorCSS :: Array String -> HTTPure.ResponseM
+uploadJSorCSS path = do
+  let realPath = intercalate "/" $ "." : "src" : path
+  fileExists <- FS.exists realPath
+
+  let headers = HTTPure.header "Content-Type" $
+                  if path !@ 0 == "js" then "text/javascript" else "text/css"
+
+  if fileExists
+  then FS.readTextFile Encoding.UTF8 realPath >>= HTTPure.ok' headers
+  else HTTPure.notFound
