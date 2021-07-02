@@ -3,17 +3,11 @@
     --tab-bar-margin: 5px;
 }
 
-html {
-    height: 100%;
-}
-
 html, body {
     margin: 0;
     padding: 0;
-}
 
-body {
-    height: calc(100% - var(--tab-bar-margin));
+    height: 100%;
 }
 
 a {
@@ -22,9 +16,7 @@ a {
 
 #tabs {
     padding: var(--tab-bar-margin);
-    height: calc(var(--tab-bar-height) + 2 * var(--tab-bar-margin));
-
-    display: flex;
+    min-height: calc(var(--tab-bar-height) + 2 * var(--tab-bar-margin));
 
     transition: background-color .1s ease-in;
 }
@@ -49,6 +41,8 @@ div > a#run {
     resize: none;
 
     box-shadow: 3px 3px 3px #b3b3b3, -3px -3px 3px #b3b3b3;
+
+    transition: background .1s ease-in;
 }
 
 .CodeMirror-lines {
@@ -64,12 +58,22 @@ div > a#run {
     position: relative;
 }
 
-.tab-padding {
+.tab-padding3 {
     flex-grow: 3;
+}
+.tab-padding2 {
+    flex-grow: 2;
+}
+.tab-padding2, .tab-padding3 {
+    min-width: 5px;
 }
 
 .tab-view {
     height: 100%;
+}
+
+.npe {
+    pointer-events: none;
 }
 
 #editor, .CodeMirror-linenumbers {
@@ -85,4 +89,8 @@ div > a#run {
 
 #editor {
     resize: none !important;
+}
+
+#toggle-dark {
+    transition: color .1s ease-in;
 }
