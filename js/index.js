@@ -5,23 +5,28 @@ let split
 
 document.addEventListener('DOMContentLoaded', e => {
   let tabbar = document.querySelector('#tabs')
+  let colorToggle = document.querySelector('#toggle-dark')
+
+  let editorTab = document.querySelector('#code-editor-tab')
+  let debugTab = document.querySelector('#debug-tab')
+  let storage = window.localStorage
 
   document.querySelector('#editor-view').addEventListener('click', e => {
     if (!tabbar.classList.contains('bg-purple')) {
-      // TODO:
-      // - Set tab to #editor-tab
+      ['db', 'dn'].map(c => editorTab.classList.toggle(c));
+      ['db', 'dn'].map(c => debugTab.classList.toggle(c))
+
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
-      // - Change tab bar color (toggle `bg-purple` and `bg-dark-gray`)
     }
   })
   document.querySelector('#compiler-view').addEventListener('click', e => {
     if (!tabbar.classList.contains('bg-dark-gray')) {
-      // TODO:
-      // - Set tab to #debug-tab
+      ['db', 'dn'].map(c => editorTab.classList.toggle(c));
+      ['db', 'dn'].map(c => debugTab.classList.toggle(c))
+
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
-      // - Change tab bar color (toggle `bg-purple` and `bg-dark-gray`)
     }
   })
   document.querySelector('#run').addEventListener('click', e => {
@@ -31,6 +36,17 @@ document.addEventListener('DOMContentLoaded', e => {
     // - Wait for request to end (correctly or timeout)
     // - Change icon back to fa-play
   })
+  colorToggle.addEventListener('click', e => {
+    const darkMode = (storage.getItem('dark-mode') || '0') == 1;
+
+    ['bg-gray', 'near-white', 'bg-near-white', 'gray'].map(c => e.target.classList.toggle(c))
+    storage.setItem('dark-mode', darkMode ? 0 : 1);
+    ['fa-sun', 'fa-moon'].map(c => e.target.querySelector('i').classList.toggle(c))
+
+    flask.setOption('theme', darkMode ? 'xq-light' : 'nord')
+  })
+
+  const darkMode = (storage.getItem('dark-mode') || '0') == 1;
 
 //  split = new Split(['#code-editor-pane', '#debug-pane'], {
 //    sizes: [75, 25],
@@ -46,6 +62,11 @@ document.addEventListener('DOMContentLoaded', e => {
     spellcheck: false,
     autocorrect: false,
     autocomplete: false,
-    theme: 'xq-light',
   })
+
+  flask.setOption('theme', darkMode ? 'nord' : 'xq-light');
+  (darkMode ? ['gray', 'bg-near-white'] : ['near-white', 'bg-gray']).map(c => colorToggle.classList.toggle(c))
+  colorToggle.querySelector('i').classList.toggle(darkMode ? 'fa-sun' : 'fa-moon')
+
+
 }, false);
