@@ -1,6 +1,6 @@
 'use strict'
 
-let flask
+let zilchEditor, nstarEditor
 let split
 
 document.addEventListener('DOMContentLoaded', e => {
@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', e => {
   let debugTab = document.querySelector('#debug-tab')
   let storage = window.localStorage
 
+  window.addEventListener('resize', e => {
+    // TODO: check if screen is higher (vertical split) or larger (horizontal split + class="flex flex-row")
+    return true
+  })
+
   document.querySelector('#editor-view').addEventListener('click', e => {
     if (!tabbar.classList.contains('bg-purple')) {
       ['db', 'dn'].map(c => editorTab.classList.toggle(c));
@@ -19,6 +24,8 @@ document.addEventListener('DOMContentLoaded', e => {
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
     }
+
+    return true
   })
   document.querySelector('#compiler-view').addEventListener('click', e => {
     if (!tabbar.classList.contains('bg-dark-gray')) {
@@ -28,6 +35,8 @@ document.addEventListener('DOMContentLoaded', e => {
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
     }
+
+    return true
   })
   document.querySelector('#run').addEventListener('click', e => {
     // TODO:
@@ -35,6 +44,8 @@ document.addEventListener('DOMContentLoaded', e => {
     // - Get code and send a request to the backend
     // - Wait for request to end (correctly or timeout)
     // - Change icon back to fa-play
+
+    return true
   })
   colorToggle.addEventListener('click', e => {
     const darkMode = (storage.getItem('dark-mode') || '0') == 1;
@@ -43,17 +54,14 @@ document.addEventListener('DOMContentLoaded', e => {
     storage.setItem('dark-mode', darkMode ? 0 : 1);
     ['fa-sun', 'fa-moon'].map(c => e.target.querySelector('i').classList.toggle(c))
 
-    flask.setOption('theme', darkMode ? 'xq-light' : 'nord')
+    zilchEditor.setOption('theme', darkMode ? 'xq-light' : 'nord')
+
+    return true
   })
 
   const darkMode = (storage.getItem('dark-mode') || '0') == 1;
 
-//  split = new Split(['#code-editor-pane', '#debug-pane'], {
-//    sizes: [75, 25],
-//    minSizes: [200, 100],
-//  })
-
-  flask = CodeMirror(document.querySelector('#editor'), {
+  zilchEditor = CodeMirror(document.querySelector('#zilch-editor'), {
     mode: "haskell",
     lineNumbers: true,
     indentUnit: 2,
@@ -63,8 +71,26 @@ document.addEventListener('DOMContentLoaded', e => {
     autocorrect: false,
     autocomplete: false,
   })
+  nstarEditor = CodeMirror(document.querySelector('#nstar-editor'), {
+    mode: "haskell",
+    lineNumbers: true,
+    indentUnit: 2,
+    tabSize: 2,
+    readonly: true,
+    lineWrapping: true,
+    spellcheck: false,
+    autocorrect: false,
+    autocomplete: false,
+  })
 
-  flask.setOption('theme', darkMode ? 'nord' : 'xq-light');
+  // TODO: check if screen is higher (vertical split) or larger (horizontal split + class="flex flex-row")
+  split = Split(['#nstar-editor', '#program-output'], {
+    direction: 'horizontal',
+    minSize: 400,
+    sizes: [66, 33],
+  })
+
+  zilchEditor.setOption('theme', darkMode ? 'nord' : 'xq-light');
   (darkMode ? ['gray', 'bg-near-white'] : ['near-white', 'bg-gray']).map(c => colorToggle.classList.toggle(c))
   colorToggle.querySelector('i').classList.toggle(darkMode ? 'fa-sun' : 'fa-moon')
 

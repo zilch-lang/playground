@@ -76,7 +76,7 @@ div > a#run {
     pointer-events: none;
 }
 
-#editor, .CodeMirror-linenumbers {
+#zilch-editor, #nstar-editor, .CodeMirror-linenumbers {
     font-family: 'Source Code Pro', monospace !important;
     font-size: 14px !important;
     font-weight: 400 !important;
@@ -87,10 +87,26 @@ div > a#run {
     padding: 5px;
 }
 
-#editor {
+#zilch-editor, #nstar-editor {
     resize: none !important;
 }
 
 #toggle-dark {
     transition: color .1s ease-in;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
 }
