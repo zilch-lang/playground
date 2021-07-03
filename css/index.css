@@ -10,8 +10,12 @@ html, body {
     height: 100%;
 }
 
-a {
+.ffos {
     font-family: "Open Sans";
+}
+
+.ffscp {
+    font-family: 'Source Code Pro', monospace;
 }
 
 #tabs {
@@ -40,8 +44,6 @@ div > a#run {
 
     resize: none;
 
-    box-shadow: 3px 3px 3px #b3b3b3, -3px -3px 3px #b3b3b3;
-
     transition: background .1s ease-in;
 }
 
@@ -52,10 +54,6 @@ div > a#run {
 
 #editor-view {
     margin-right: 5px;
-}
-
-.codejar-wrap {
-    position: relative;
 }
 
 .tab-padding3 {
@@ -70,6 +68,19 @@ div > a#run {
 
 .tab-view {
     height: 100%;
+    width: 100%;
+}
+
+#program-output {
+    padding: 5px;
+}
+
+#program-output > div {
+    box-shadow: 3px -3px 3px #b3b3b3, -3px 3px 3px #b3b3b3;
+    height: 100%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .npe {
@@ -84,6 +95,9 @@ div > a#run {
     letter-spacing: normal !important;
     line-height: 20px !important;
     tab-size: 2;
+}
+
+#zilch-editor, #debug-tab > div, .CodeMirror-linenumbers {
     padding: 5px;
 }
 
@@ -93,6 +107,20 @@ div > a#run {
 
 #toggle-dark {
     transition: color .1s ease-in;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 10px 1fr;
+}
+
+.gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+}
+
+.gutter-col-2 {
+    grid-column: 2;
 }
 
 .gutter {
@@ -109,4 +137,33 @@ div > a#run {
 .gutter.gutter-horizontal {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
     cursor: col-resize;
+}
+
+.divider {
+    display: flex;
+    overflow: hidden;
+}
+
+.divider::before, .divider::after {
+    flex: 1 1 auto;
+    border-top: 1px solid;
+    content: '';
+    margin: auto;
+}
+
+.divider::before {
+    margin-right: 2%;
+}
+
+.divider::after {
+    margin-left: 2%;
+}
+
+#debug-tab, html, body, #program-output {
+    overflow: hidden;
+}
+
+code {
+    word-break: break-word;
+    white-space: pre-wrap;
 }

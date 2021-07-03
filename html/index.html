@@ -17,35 +17,53 @@
     </head>
     <body class="flex flex-column">
         <div id="tabs" class="bg-purple flex flex-wrap items-center">
-            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9">
+            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9 ffos">
                 <i class="fas fa-keyboard dib npe"></i>
                 <span class="f6 ml2 npe">EDITOR</span>
             </a>
-            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9">
+            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9 ffos">
                 <i class="fas fa-microchip dib npe" aria-hidden="true"></i>
                 <span class="f6 ml2 npe">OUTPUT</span>
             </a>
             <div class="tab-padding2"></div>
-            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9">
+            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9 ffos">
                 <i class="fas fa-play-circle dib npe"></i>
                 <span class="f6 ml2 npe">RUN</span>
             </a>
             <div class="tab-padding3"></div>
-            <a id="toggle-dark" class="f6 link dim br1 ph3 pv2 dib inline-flex items-center tc br2 fw9">
+            <a id="toggle-dark" class="f6 link dim br1 ph3 pv2 dib inline-flex items-center tc br2 fw9 ffos">
                 <i class="fas dib npe"></i>
             </a>
         </div>
-        <div style="flex-grow: 1">
+        <div style="flex-grow: 1; overflow: hidden">
             <span id="code-editor-tab" class="tab-view db">
                 <div id="zilch-editor"></div>
             </span>
-            <span id="debug-tab" class="tab-view dn flex flex-row">
-                <div id="nstar-editor"></div>
-                <div id="program-output"></div>
+            <span id="debug-tab" class="tab-view dn">
+                <div style="height: 100%">
+                    <div class="flex flex-column" style="box-shadow: 3px 3px 3px #b3b3b3, -3px -3px 3px #b3b3b3; height: 100%">
+                        <div class="f5 black-70 mv0 pv2 ph3 fw9 ffos divider">N* GENERATED</div>
+                        <div id="nstar-editor"></div>
+                    </div>
+                </div>
+                <div class="gutter-col gutter-col-2 gutter gutter-horizontal gutter-debug-tab"></div>
+                <div id="program-output">
+                    <div>
+                        <div id="stdout">
+                            <div class="f5 black-70 mv0 pv2 ph3 fw9 ffos divider">STANDARD OUTPUT</div>
+                            <pre class="ph3 f6 ffscp black"><code></code></pre>
+                        </div>
+                        <div id="stderr">
+                            <div class="f5 black-70 mv0 pv2 ph3 fw9 ffos divider">STANDARD ERROR</div>
+                            <pre class="ph3 f6 ffscp black"><code></code></pre>
+                        </div>
+                    </div>
+                </div>
             </span>
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.2/split.min.js" integrity="sha512-to2k78YjoNUq8+hnJS8AwFg/nrLRFLdYYalb18SlcsFRXavCOTfBF3lNyplKkLJeB8YjKVTb1FPHGSy9sXfSdg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/split-grid@1.0.11/dist/split-grid.min.js"></script>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.2/split.min.js" integrity="sha512-to2k78YjoNUq8+hnJS8AwFg/nrLRFLdYYalb18SlcsFRXavCOTfBF3lNyplKkLJeB8YjKVTb1FPHGSy9sXfSdg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.0/prism.min.js" integrity="sha512-axJX7DJduStuBB8ePC8ryGzacZPr3rdLaIDZitiEgWWk2gsXxEFlm4UW0iNzj2h3wp5mOylgHAzBzM4nRSvTZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js" integrity="sha512-i9pd5Q6ntCp6LwSgAZDzsrsOlE8SN+H5E0T5oumSXWQz5l1Oc4Kb5ZrXASfyjjqtc6Mg6xWbu+ePbbmiEPJlDg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/keymap/sublime.min.js" integrity="sha512-CB1k89Ilzxp1upm9MpHjWR0Ec2wg/OzDfWC/pmjJkDnxmXMl4AhgZ4bYPdkWjlL6NoLfoZppxHf55hunUgg8wQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
