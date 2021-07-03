@@ -100,14 +100,4 @@ document.addEventListener('DOMContentLoaded', e => {
   zilchEditor.setOption('theme', darkMode ? 'nord' : 'xq-light');
   (darkMode ? ['gray', 'bg-near-white'] : ['near-white', 'bg-gray']).map(c => colorToggle.classList.toggle(c))
   colorToggle.querySelector('i').classList.toggle(darkMode ? 'fa-sun' : 'fa-moon')
-
-
-  document.querySelector('#stdout pre > code').innerText = `
-[error]: File 'hello.zc' not found in include path
-     In: example.zc
-
- 1 | import hello
-     ^^^^^^^^^^^^ Current include path:
-                  - .
-`
 }, false);

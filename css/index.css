@@ -167,3 +167,7 @@ code {
     word-break: break-word;
     white-space: pre-wrap;
 }
+
+* {
+    box-sizing: inherit;
+}
