@@ -106,9 +106,23 @@ div > a#run {
     transition: color .1s ease-in;
 }
 
-.grid {
+.grid-col2 {
     display: grid;
     grid-template-columns: 1fr 10px 1fr;
+}
+
+.grid-row2 {
+    display: grid;
+    grid-template-rows: 1fr 10px 1fr;
+}
+
+.gutter-row {
+    grid-column: 1/-1;
+    cursor: row-resize;
+}
+
+.gutter-row-2 {
+    grid-row: 2;
 }
 
 .gutter-col {

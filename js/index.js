@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', e => {
   document.querySelector('#editor-view').addEventListener('click', e => {
     if (!tabbar.classList.contains('bg-purple')) {
       ['db', 'dn'].map(c => editorTab.classList.toggle(c));
-      ['grid', 'dn'].map(c => debugTab.classList.toggle(c))
+      ['grid-row2', 'dn'].map(c => debugTab.classList.toggle(c))
 
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', e => {
   document.querySelector('#compiler-view').addEventListener('click', e => {
     if (!tabbar.classList.contains('bg-dark-gray')) {
       ['db', 'dn'].map(c => editorTab.classList.toggle(c));
-      ['grid', 'dn'].map(c => debugTab.classList.toggle(c))
+      ['grid-row2', 'dn'].map(c => debugTab.classList.toggle(c))
 
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
@@ -95,10 +95,9 @@ document.addEventListener('DOMContentLoaded', e => {
     autocomplete: false,
   })
 
-  // TODO: check if screen is higher (vertical split) or larger (horizontal split)
   split = Split({
-    minSize: 300,
-    columnGutters: [{
+    minSize: 200,
+    rowGutters: [{
       track: 1,
       element: document.querySelector('.gutter-debug-tab'),
     }],
