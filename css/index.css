@@ -43,8 +43,6 @@ div > a#run {
     padding: 0;
 
     resize: none;
-
-    transition: background .1s ease-in;
 }
 
 .CodeMirror-lines {
@@ -76,7 +74,6 @@ div > a#run {
 }
 
 #program-output > div {
-    box-shadow: 3px -3px 3px #b3b3b3, -3px 3px 3px #b3b3b3;
     height: 100%;
 
     overflow-y: auto;
@@ -121,6 +118,10 @@ div > a#run {
 
 .gutter-col-2 {
     grid-column: 2;
+}
+
+.gutter.dark-gutter {
+    background-color: #232830;
 }
 
 .gutter {
@@ -170,4 +171,19 @@ code {
 
 * {
     box-sizing: inherit;
+}
+
+.cm-s-nord {
+    background: #2e3440;
+    color: #d8dee9;
+}
+
+
+
+.CodeMirror-wrap, .CodeMirror-linenumbers, .CodeMirror-gutter, .divider, .gutter {
+    transition: background .1s ease-in;
+}
+
+#stdout, #stderr, .divider {
+    transition: color .1s ease-in;
 }

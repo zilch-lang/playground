@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', e => {
   let debugTab = document.querySelector('#debug-tab')
   let storage = window.localStorage
 
+  let width = Math.floor(document.body.getBoundingClientRect().width)
+  let height = Math.floor(document.body.getBoundingClientRect().height)
+
   window.addEventListener('resize', e => {
     // TODO: check if screen is higher (vertical split) or larger (horizontal split + class="flex flex-row")
     return true
@@ -58,7 +61,12 @@ document.addEventListener('DOMContentLoaded', e => {
     storage.setItem('dark-mode', darkMode ? 0 : 1);
     ['fa-sun', 'fa-moon'].map(c => e.target.querySelector('i').classList.toggle(c))
 
-    zilchEditor.setOption('theme', darkMode ? 'xq-light' : 'nord')
+    const editorMode = darkMode ? 'xq-light' : 'nord'
+    zilchEditor.setOption('theme', editorMode)
+    nstarEditor.setOption('theme', editorMode);
+    ['#code-editor-tab', '#debug-tab'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
+    Array.prototype.map.call(document.querySelectorAll('.divider'), e => ['black-70', 'white-70'].map(c => e.classList.toggle(c)))
+    Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'))
 
     return true
   })
@@ -97,7 +105,17 @@ document.addEventListener('DOMContentLoaded', e => {
     expandToMin: true,
   })
 
-  zilchEditor.setOption('theme', darkMode ? 'nord' : 'xq-light');
+  // setup the dark mode on loading
+  const editorTheme = darkMode ? 'nord' : 'xq-light'
+  zilchEditor.setOption('theme', editorTheme)
+  nstarEditor.setOption('theme', editorTheme);
   (darkMode ? ['gray', 'bg-near-white'] : ['near-white', 'bg-gray']).map(c => colorToggle.classList.toggle(c))
   colorToggle.querySelector('i').classList.toggle(darkMode ? 'fa-sun' : 'fa-moon')
+  if (darkMode) {
+    ['#code-editor-tab', '#debug-tab'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
+  }
+  Array.prototype.map.call(document.querySelectorAll('.divider'), e => e.classList.toggle(darkMode ? 'white-70' : 'black-70'))
+  if (darkMode) {
+    Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'))
+  }
 }, false);
