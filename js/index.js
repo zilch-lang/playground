@@ -6,6 +6,7 @@ let split
 document.addEventListener('DOMContentLoaded', e => {
   let tabbar = document.querySelector('#tabs')
   let colorToggle = document.querySelector('#toggle-dark')
+  let runButton = document.querySelector('#run')
 
   let editorTab = document.querySelector('#code-editor-tab')
   let debugTab = document.querySelector('#debug-tab')
@@ -45,9 +46,17 @@ document.addEventListener('DOMContentLoaded', e => {
 
     return true
   })
-  document.querySelector('#run').addEventListener('click', e => {
+  runButton.addEventListener('click', e => {
+    if (runButton.disabled)
+      return false
+
+    let buttonIcon = runButton.querySelector('i')
+    buttonIcon.classList.toggle('fa-play-circle')
+    buttonIcon.classList.toggle('fa-stop-circle');
+
+    ['bg-silver', 'bg-dark-green', 'dim', 'curna'].map(c => runButton.classList.toggle(c))
+    runButton.disabled = true
     // TODO:
-    // - Change icon to fa-stop-circle
     // - Get code and send a request to the backend
     // - Wait for request to end (correctly or timeout)
     // - Change icon back to fa-play

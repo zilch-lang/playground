@@ -201,3 +201,7 @@ code {
 #stdout, #stderr, .divider {
     transition: color .1s ease-in;
 }
+
+.curna {
+    cursor: not-allowed !important;
+}
