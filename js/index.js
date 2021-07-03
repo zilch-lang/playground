@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', e => {
     nstarEditor.setOption('theme', editorMode);
     ['#code-editor-tab', '#debug-tab'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
     Array.prototype.map.call(document.querySelectorAll('.divider'), e => ['black-70', 'white-70'].map(c => e.classList.toggle(c)))
-    Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'))
+    Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'));
+    ['#stdout > pre', '#stderr > pre'].map(e => ['white', 'black'].map(c => document.querySelector(e).classList.toggle(c)))
 
     return true
   })
@@ -117,4 +118,5 @@ document.addEventListener('DOMContentLoaded', e => {
   if (darkMode) {
     Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'))
   }
+  ['#stdout > pre', '#stderr > pre'].map(e => document.querySelector(e).classList.toggle(darkMode ? 'white' : 'black'))
 }, false);
