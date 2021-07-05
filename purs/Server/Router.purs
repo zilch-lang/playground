@@ -11,12 +11,12 @@ import Server.Routes.JS as JS
 import Server.Routes.PNG as PNG
 
 -- | Handles requests coming to the server.
-serverRouter :: HTTPure.Request -> HTTPure.ResponseM
-serverRouter { method: HTTPure.Get, path }
+serverRouter :: String -> HTTPure.Request -> HTTPure.ResponseM
+serverRouter _ { method: HTTPure.Get, path }
   | Array.null path        = Index.runRoute
   | path !@ 0 == "js"      = JS.runRoute path
   | path !@ 0 == "css"     = CSS.runRoute path
   | path !@ 0 == "png"     = PNG.runRoute path
-serverRouter { method: HTTPure.Post, path, body }
-  | path !@ 0 == "compile" = Compile.runRoute body
-serverRouter _             = HTTPure.notFound
+serverRouter outDir { method: HTTPure.Post, path, body }
+  | path !@ 0 == "compile" = Compile.runRoute { gzcExe: "gzc", gccExe: "gcc" } outDir body
+serverRouter _ _           = HTTPure.notFound
