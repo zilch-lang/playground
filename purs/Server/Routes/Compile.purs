@@ -41,7 +41,7 @@ compileCode { gzcExe, gccExe, outDir } body = do
   let { code } = fromRight { code: "" } $ decodeJson =<< parseJson body
 
   Milliseconds ms <- lift $ unInstant <$> liftEffect now
-  let timestampFile = outDir <> show ms <> ".zc"
+  let timestampFile = outDir <> "/" <> show ms <> ".zc"
   lift $ FS.writeTextFile Encoding.UTF8 timestampFile code
 
   res1 <- lift $ makeAff \ cb -> do
