@@ -1,5 +1,6 @@
 module Server.Routes.Compile (runRoute) where
 
+import CLI (CLI)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
 import Data.Argonaut (parseJson, stringify)
@@ -30,13 +31,13 @@ type CompileResult = { fail :: Boolean, stdout :: String, stderr :: String }
 --
 --   * `{ "fail": true, "stdout": "...", "stderr": "..." }` if the code failed to compile
 --   * `{ "fail": false, "stdout": "...", "stderr": "..." }` if the code compiled successfully and executed
-runRoute :: { gzcExe :: String, gccExe :: String } -> String -> String -> HTTPure.ResponseM
-runRoute exes outDir body = do
-  res <- runExceptT (compileCode exes outDir body)
+runRoute :: CLI -> String -> HTTPure.ResponseM
+runRoute cli body = do
+  res <- runExceptT (compileCode cli body)
   HTTPure.ok' (HTTPure.header "Content-Type" "application/json") (bifold res)
 
-compileCode :: { gzcExe :: String, gccExe :: String } -> String -> String -> ExceptT String Aff String
-compileCode { gzcExe, gccExe } outDir body = do
+compileCode :: CLI -> String -> ExceptT String Aff String
+compileCode { gzcExe, gccExe, outDir } body = do
   let { code } = fromRight { code: "" } $ decodeJson =<< parseJson body
 
   Milliseconds ms <- lift $ unInstant <$> liftEffect now

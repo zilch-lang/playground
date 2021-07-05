@@ -4,10 +4,15 @@ import Data.Foldable (fold)
 import Effect (Effect)
 import Options.Applicative ( Parser, option, int, long, short, metavar, help
                            , showDefault, value, execParser, info, helper
-                           , fullDesc, progDesc, (<**>) )
+                           , fullDesc, progDesc, (<**>), strOption )
 import Prelude
 
-type CLI = { port :: Int }
+type CLI =
+  { port :: Int
+  , gzcExe :: String
+  , gccExe :: String
+  , outDir :: String
+  }
 
 -- | Parses the command-line arguments:
 --
@@ -22,8 +27,30 @@ cli = ado
           , showDefault
           , value 8080
           ]
+  gzcExe <- strOption $ fold
+            [ long "with-gzc"
+            , metavar "GZC"
+            , help "Uses a custom `gzc` executable"
+            , showDefault
+            , value "gzc"
+            ]
+  gccExe <- strOption $ fold
+            [ long "with-gcc"
+            , metavar "GCC"
+            , help "Uses a custom `gcc` executable"
+            , showDefault
+            , value "gcc"
+            ]
+  outDir <- strOption $ fold
+            [ long "out"
+            , short 'o'
+            , metavar "OUTPUT-DIR"
+            , help "Sets the output directory, used to store temporary source files"
+            , showDefault
+            , value "./out"
+            ]
 
-  in { port }
+  in { port, gzcExe, gccExe, outDir }
 
 -- | A simple `main` wrapper to automatically parse the command-line.
 cliMain :: forall b. (CLI -> Effect b) -> Effect b
