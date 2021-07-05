@@ -56,10 +56,38 @@ document.addEventListener('DOMContentLoaded', e => {
 
     ['bg-silver', 'bg-dark-green', 'dim', 'curna'].map(c => runButton.classList.toggle(c))
     runButton.disabled = true
+
+    const restoreState = () => {
+      runButton.disabled = false
+
+      buttonIcon.classList.toggle('fa-play-circle')
+      buttonIcon.classList.toggle('fa-stop-circle');
+
+      ['bg-silver', 'bg-dark-green', 'dim', 'curna'].map(c => runButton.classList.toggle(c))
+    }
+
+    let zilchCode = zilchEditor.getValue()
+    fetch('/compile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code: zilchCode }),
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Response status: ${res.status}`)
+        }
+        return res.json()
+      })
+      .then(res => {
+        document.querySelector('#stdout > pre code').innerText = res.stdout
+        document.querySelector('#stderr > pre code').innerText = res.stderr
+      })
+      .catch(err => { alert(err.message) })
+      .finally(()=> { restoreState() })
     // TODO:
-    // - Get code and send a request to the backend
-    // - Wait for request to end (correctly or timeout)
-    // - Change icon back to fa-play
+    // - set N* output
 
     return true
   })
