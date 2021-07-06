@@ -7,6 +7,7 @@ import HTTPure as HTTPure
 import Prelude
 import Server.Routes.Compile as Compile
 import Server.Routes.CSS as CSS
+import Server.Routes.ICO as ICO
 import Server.Routes.Index as Index
 import Server.Routes.JS as JS
 import Server.Routes.PNG as PNG
@@ -18,6 +19,7 @@ serverRouter _ { method: HTTPure.Get, path }
   | path !@ 0 == "js"      = JS.runRoute path
   | path !@ 0 == "css"     = CSS.runRoute path
   | path !@ 0 == "png"     = PNG.runRoute path
+  | path !@ 0 == "ico"     = ICO.runRoute path
 serverRouter cli { method: HTTPure.Post, path, body }
   | path !@ 0 == "compile" = Compile.runRoute cli body
 serverRouter _ _           = HTTPure.notFound
