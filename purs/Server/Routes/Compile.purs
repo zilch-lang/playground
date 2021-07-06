@@ -2,17 +2,19 @@ module Server.Routes.Compile (runRoute) where
 
 import CLI (CLI)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
-import Control.Monad.Trans.Class (lift)
+import Control.Monad.Trans.Class (class MonadTrans, lift)
+import Control.Monad.Writer (WriterT, runWriterT, tell)
 import Data.Argonaut (parseJson, stringify)
 import Data.Argonaut.Decode (decodeJson)
 import Data.Argonaut.Encode (encodeJson)
-import Data.Bifoldable (bifold)
 import Data.DateTime.Instant (unInstant)
-import Data.Either (fromRight, Either(..), note)
+import Data.Either (fromRight, Either(..), note, either)
+import Data.Int (floor)
 import Data.Maybe (Maybe(..))
 import Data.Posix.Signal (Signal(SIGTERM))
 import Data.Time.Duration (Milliseconds(..))
-import Effect.Aff (makeAff, Canceler(..), Aff)
+import Data.Tuple (Tuple(..))
+import Effect.Aff (makeAff, Canceler(..), Aff, apathize)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Now (now)
@@ -23,9 +25,7 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Prelude
 
-type ZilchCode = { code :: String }
-
-type CompileResult = { fail :: Boolean, stdout :: String, stderr :: String }
+type Compile a = ExceptT Unit (WriterT (Tuple String String) Aff) a
 
 -- | Compiles some Zilch code and returns, as JSON:
 --
@@ -33,60 +33,33 @@ type CompileResult = { fail :: Boolean, stdout :: String, stderr :: String }
 --   * `{ "fail": false, "stdout": "...", "stderr": "..." }` if the code compiled successfully and executed
 runRoute :: CLI -> String -> HTTPure.ResponseM
 runRoute cli body = do
-  res <- runExceptT (compileCode cli body)
-  HTTPure.ok' (HTTPure.header "Content-Type" "application/json") (bifold res)
+  Tuple hasError (Tuple stdout stderr) <- runWriterT $ runExceptT (compileCode cli body)
 
-compileCode :: CLI -> String -> ExceptT String Aff String
+  HTTPure.ok' (HTTPure.header "Content-Type" "application/json")
+              (stringify $ encodeJson { fail: either (const true) (const false) hasError, stdout, stderr })
+
+compileCode :: CLI -> String -> Compile Unit
 compileCode { gzcExe, gccExe, outDir } body = do
   let { code } = fromRight { code: "" } $ decodeJson =<< parseJson body
 
-  Milliseconds ms <- lift $ unInstant <$> liftEffect now
-  let timestampFile = outDir <> "/" <> show ms <> ".zc"
-  lift $ FS.writeTextFile Encoding.UTF8 timestampFile code
+  Milliseconds ms <- lift2 $ unInstant <$> liftEffect now
+  let file_zc  = outDir <> "/" <> show (floor ms) <> ".zc"
+      file_o   = file_zc <> ".o"
+      file_out = file_o <> ".out"
 
-  res1 <- lift $ makeAff \ cb -> do
-    proc <- CP.execFile gzcExe ["-ddump-nstar", "--output=" <> timestampFile <> ".o", timestampFile] compileOptions \ result -> cb (Right result)
+  lift2 do
+    FS.writeTextFile Encoding.UTF8 file_zc code
 
-    pure $ Canceler \ _ -> liftEffect $ CP.kill SIGTERM proc
+  startProcess gzcExe ["-ddump-nstar", "--output=" <> file_o, file_zc] compileOptions
+    \ _ -> lift2 $ apathize $ FS.unlink file_zc
 
-  res1' <- lift $ liftEffect do
-    { stdout: _, stderr: _ }
-      <$> Buffer.toString Encoding.UTF8 res1.stdout
-      <*> Buffer.toString Encoding.UTF8 res1.stderr
+  startProcess gccExe ["--output=" <> file_out, file_o] compileOptions
+    \ _ -> lift2 $ apathize $ FS.unlink file_o
 
-  lift $ FS.unlink timestampFile
+  startProcess file_out [] execOptions
+    \ _ -> lift2 $ apathize $ FS.unlink file_out
 
-  case swapEither $ note unit res1.error of
-    Left e  -> do
-      lift $ liftEffect $ Console.log $ show e
-      throwError $ stringify $ encodeJson { fail: true, stdout: res1'.stdout, stderr: res1'.stderr }
-    Right _ -> pure unit
-
-  res2 <- lift $ makeAff \ cb -> do
-    proc <- CP.execFile gccExe ["--output=" <> timestampFile <> ".out", timestampFile <> ".o"] compileOptions \ result -> cb (Right result)
-
-    pure $ Canceler \ _ -> liftEffect $ CP.kill SIGTERM proc
-
-  res2' <- lift $ liftEffect do
-    { stdout: _, stderr: _ }
-      <$> ((res1'.stdout <> _) <$> Buffer.toString Encoding.UTF8 res2.stdout)
-      <*> ((res1'.stderr <> _) <$> Buffer.toString Encoding.UTF8 res2.stderr)
-
-  case swapEither $ note unit res2.error of
-    Left e -> do
-      lift $ liftEffect $ Console.log $ show e
-      throwError $ stringify $ encodeJson { fail: true, stdout: res2'.stdout, stderr: res2'.stderr }
-    Right _ -> pure unit
-
-  lift $ FS.unlink (timestampFile <> ".o")
-
-  -- TODO: check if command errored out
-
-  -- TODO: run executable
-
-  lift $ FS.unlink (timestampFile <> ".out")
-
-  pure $ stringify $ encodeJson { fail: false, stdout: res2'.stdout, stderr: res2'.stderr }
+  pure unit
   where
     compileOptions = CP.defaultExecOptions
       { timeout   = Just 180.0    -- 3 minutes
@@ -97,7 +70,44 @@ compileCode { gzcExe, gccExe, outDir } body = do
       , maxBuffer = Just 26214400 -- 25 MiB
       }
 
+
+-- | Starts a process given its name/path, its arguments, some execution options and a function to call on command completion.
+startProcess :: String
+             -> Array String
+             -> CP.ExecOptions
+             -> (CP.ExecResult -> Compile Unit)
+             -> Compile Unit
+startProcess program args execOptions cont = do
+  res@{ stdout, stderr, error } <- lift2 $ makeAff \ cb -> do
+    proc <- CP.execFile program args execOptions \ result -> cb (Right result)
+
+    pure $ Canceler \ _ -> liftEffect $ CP.kill SIGTERM proc
+
+  tup <- lift2 $ liftEffect do
+    Tuple <$> Buffer.toString Encoding.UTF8 stdout
+          <*> Buffer.toString Encoding.UTF8 stderr
+  tell tup
+
+  cont res
+
+  case swapEither $ note unit error of
+    Left e -> do
+      lift2 $ liftEffect $ Console.log $ show e
+      throwError unit
+    Right _ -> pure unit
+
+
+
 -- | Swaps the left and the right component of an `Either` value.
 swapEither :: forall a b. Either a b -> Either b a
 swapEither (Left x)  = Right x
 swapEither (Right x) = Left x
+
+lift2 :: forall t t' m a
+      .  Monad m
+      => MonadTrans t
+      => MonadTrans t'
+      => Monad (t' m)
+      => m a
+      -> t (t' m) a
+lift2 = lift <<< lift

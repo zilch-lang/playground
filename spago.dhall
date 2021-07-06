@@ -11,6 +11,7 @@
   , "either"
   , "foldable-traversable"
   , "httpure"
+  , "integers"
   , "maybe"
   , "node-buffer"
   , "node-child-process"
@@ -23,6 +24,7 @@
   , "prelude"
   , "psci-support"
   , "transformers"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "purs/**/*.purs" ]
