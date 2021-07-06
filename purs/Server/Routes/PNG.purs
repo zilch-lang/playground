@@ -9,6 +9,6 @@ import Prelude
 import Server.Common (readFile)
 
 runRoute :: Array String -> HTTPure.ResponseM
-runRoute path = readFile moveIntoAssets path >>= maybe HTTPure.notFound (HTTPure.ok' $ HTTPure.header "Content-Type" "text/javascript")
+runRoute path = readFile moveIntoAssets path >>= maybe HTTPure.notFound (HTTPure.ok' $ HTTPure.header "Content-Type" "image/png")
   where
     moveIntoAssets p = "assets" : unsafePartial fromJust (Array.tail p)
