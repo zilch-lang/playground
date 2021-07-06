@@ -7,17 +7,15 @@ import Control.Monad.Writer (WriterT, runWriterT, tell)
 import Data.Argonaut (parseJson, stringify)
 import Data.Argonaut.Decode (decodeJson)
 import Data.Argonaut.Encode (encodeJson)
-import Data.DateTime.Instant (unInstant)
 import Data.Either (fromRight, Either(..), note, either)
-import Data.Int (floor)
 import Data.Maybe (Maybe(..))
 import Data.Posix.Signal (Signal(SIGTERM))
-import Data.Time.Duration (Milliseconds(..))
 import Data.Tuple (Tuple(..))
+import Data.UUID (genUUID)
+import Data.UUID (toString) as UUID
 import Effect.Aff (makeAff, Canceler(..), Aff, apathize)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
-import Effect.Now (now)
 import HTTPure as HTTPure
 import Node.Buffer as Buffer
 import Node.ChildProcess as CP
@@ -42,8 +40,8 @@ compileCode :: CLI -> String -> Compile Unit
 compileCode { gzcExe, gccExe, outDir } body = do
   let { code } = fromRight { code: "" } $ decodeJson =<< parseJson body
 
-  Milliseconds ms <- lift2 $ unInstant <$> liftEffect now
-  let file_zc  = outDir <> "/" <> show (floor ms) <> ".zc"
+  uuid <- lift2 $ liftEffect genUUID
+  let file_zc  = outDir <> "/" <> UUID.toString uuid <> ".zc"
       file_o   = file_zc <> ".o"
       file_out = file_o <> ".out"
 
