@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', e => {
       .then(res => {
         document.querySelector('#stdout > pre code').innerText = res.stdout
         document.querySelector('#stderr > pre code').innerText = res.stderr
+        nstarEditor.setValue(res.nstar)
       })
       .catch(err => { alert(err.message) })
       .finally(()=> { restoreState() })
@@ -108,8 +109,6 @@ document.addEventListener('DOMContentLoaded', e => {
 
     return true
   })
-
-  const darkMode = (storage.getItem('dark-mode') || '0') == 1;
 
   zilchEditor = CodeMirror(document.querySelector('#zilch-editor'), {
     mode: "haskell",
@@ -143,6 +142,7 @@ document.addEventListener('DOMContentLoaded', e => {
   })
 
   // setup the dark mode on loading
+  const darkMode = (storage.getItem('dark-mode') || '0') == 1
   const editorTheme = darkMode ? 'nord' : 'xq-light'
   zilchEditor.setOption('theme', editorTheme)
   nstarEditor.setOption('theme', editorTheme);
