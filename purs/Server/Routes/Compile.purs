@@ -1,5 +1,7 @@
 module Server.Routes.Compile (runRoute) where
 
+import Ansi.Codes (Color(..)) as ANSI
+import Ansi.Output (bold, foreground, withGraphics) as ANSI
 import CLI (CLI)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (class MonadTrans, lift)
@@ -16,6 +18,7 @@ import Data.UUID (toString) as UUID
 import Effect.Aff (makeAff, Canceler(..), Aff, apathize)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
+import Effect.Exception (message)
 import HTTPure as HTTPure
 import Node.Buffer as Buffer
 import Node.ChildProcess as CP
@@ -48,10 +51,10 @@ compileCode { gzcExe, gccExe, outDir } body = do
   lift2 do
     FS.writeTextFile Encoding.UTF8 file_zc code
 
-  startProcess gzcExe ["-ddump-nstar", "--output=" <> file_o, file_zc] compileOptions
+  startProcess gzcExe ["-ddump-nstar", "--output", file_o, "--ddump-dir", outDir, file_zc] compileOptions
     \ _ -> lift2 $ apathize $ FS.unlink file_zc
 
-  startProcess gccExe ["--output=" <> file_out, file_o] compileOptions
+  startProcess gccExe ["--output", file_out, file_o] compileOptions
     \ _ -> lift2 $ apathize $ FS.unlink file_o
 
   startProcess file_out [] execOptions
@@ -90,7 +93,7 @@ startProcess program args execOptions cont = do
 
   case swapEither $ note unit error of
     Left e -> do
-      lift2 $ liftEffect $ Console.log $ show e
+      lift2 $ liftEffect $ Console.error $ ANSI.withGraphics (ANSI.bold <> ANSI.foreground ANSI.Red) (message e)
       throwError unit
     Right _ -> pure unit
 

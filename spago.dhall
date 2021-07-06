@@ -1,32 +1,30 @@
-{ name =
-    "zilch-playground"
+{ name = "zilch-playground"
 , dependencies =
-    [ "aff"
-    , "ansi"
-    , "argonaut"
-    , "argonaut-codecs"
-    , "arrays"
-    , "console"
-    , "effect"
-    , "either"
-    , "foldable-traversable"
-    , "httpure"
-    , "maybe"
-    , "node-buffer"
-    , "node-child-process"
-    , "node-fs-aff"
-    , "optparse"
-    , "partial"
-    , "pathy"
-    , "posix-types"
-    , "prelude"
-    , "psci-support"
-    , "transformers"
-    , "tuples"
-    , "uuid"
-    ]
-, packages =
-    ./packages.dhall
-, sources =
-    [ "purs/**/*.purs" ]
+  [ "aff"
+  , "ansi"
+  , "argonaut"
+  , "argonaut-codecs"
+  , "arrays"
+  , "console"
+  , "effect"
+  , "either"
+  , "exceptions"
+  , "foldable-traversable"
+  , "httpure"
+  , "maybe"
+  , "node-buffer"
+  , "node-child-process"
+  , "node-fs-aff"
+  , "optparse"
+  , "partial"
+  , "pathy"
+  , "posix-types"
+  , "prelude"
+  , "psci-support"
+  , "transformers"
+  , "tuples"
+  , "uuid"
+  ]
+, packages = ./packages.dhall
+, sources = [ "purs/**/*.purs" ]
 }
