@@ -5,6 +5,7 @@
   , "argonaut"
   , "argonaut-codecs"
   , "arrays"
+  , "bifunctors"
   , "console"
   , "effect"
   , "either"

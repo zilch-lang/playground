@@ -9,13 +9,16 @@ import Control.Monad.Writer (WriterT, runWriterT, tell)
 import Data.Argonaut (parseJson, stringify)
 import Data.Argonaut.Decode (decodeJson)
 import Data.Argonaut.Encode (encodeJson)
+import Data.Bifunctor (lmap)
+import Data.Bifoldable (bifold)
 import Data.Either (fromRight, Either(..), note, either)
 import Data.Maybe (Maybe(..))
 import Data.Posix.Signal (Signal(SIGTERM))
 import Data.Tuple (Tuple(..))
+import Data.Tuple.Nested(Tuple3, tuple3, uncurry3)
 import Data.UUID (genUUID)
 import Data.UUID (toString) as UUID
-import Effect.Aff (makeAff, Canceler(..), Aff, apathize)
+import Effect.Aff (makeAff, Canceler(..), Aff, apathize, attempt)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Exception (message)
@@ -26,7 +29,7 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Prelude
 
-type Compile a = ExceptT Unit (WriterT (Tuple String String) Aff) a
+type Compile a = ExceptT Unit (WriterT (Tuple3 String String String) Aff) a
 
 -- | Compiles some Zilch code and returns, as JSON:
 --
@@ -34,10 +37,10 @@ type Compile a = ExceptT Unit (WriterT (Tuple String String) Aff) a
 --   * `{ "fail": false, "stdout": "...", "stderr": "..." }` if the code compiled successfully and executed
 runRoute :: CLI -> String -> HTTPure.ResponseM
 runRoute cli body = do
-  Tuple hasError (Tuple stdout stderr) <- runWriterT $ runExceptT (compileCode cli body)
+  Tuple hasError res <- runWriterT $ runExceptT (compileCode cli body)
 
   HTTPure.ok' (HTTPure.header "Content-Type" "application/json")
-              (stringify $ encodeJson { fail: either (const true) (const false) hasError, stdout, stderr })
+              (stringify $ encodeJson $ uncurry3 { fail: either (const true) (const false) hasError, stdout: _, stderr: _, nstar: _ } res)
 
 compileCode :: CLI -> String -> Compile Unit
 compileCode { gzcExe, gccExe, outDir } body = do
@@ -45,6 +48,7 @@ compileCode { gzcExe, gccExe, outDir } body = do
 
   uuid <- lift2 $ liftEffect genUUID
   let file_zc  = outDir <> "/" <> UUID.toString uuid <> ".zc"
+      file_nst = outDir <> "/" <> UUID.toString uuid <> ".nst"
       file_o   = file_zc <> ".o"
       file_out = file_o <> ".out"
 
@@ -53,6 +57,9 @@ compileCode { gzcExe, gccExe, outDir } body = do
 
   startProcess gzcExe ["-ddump-nstar", "--output", file_o, "--ddump-dir", outDir, file_zc] compileOptions
     \ _ -> lift2 $ apathize $ FS.unlink file_zc
+
+  nstar <- lift2 $ (bifold <<< lmap (const "")) <$> attempt (FS.readTextFile Encoding.UTF8 file_nst)
+  tell (tuple3 "" "" nstar)
 
   startProcess gccExe ["--output", file_out, file_o] compileOptions
     \ _ -> lift2 $ apathize $ FS.unlink file_o
@@ -85,8 +92,9 @@ startProcess program args execOptions cont = do
     pure $ Canceler \ _ -> liftEffect $ CP.kill SIGTERM proc
 
   tup <- lift2 $ liftEffect do
-    Tuple <$> Buffer.toString Encoding.UTF8 stdout
-          <*> Buffer.toString Encoding.UTF8 stderr
+    tuple3 <$> Buffer.toString Encoding.UTF8 stdout
+           <*> Buffer.toString Encoding.UTF8 stderr
+           <*> pure ""
   tell tup
 
   cont res
