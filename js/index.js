@@ -84,11 +84,12 @@ document.addEventListener('DOMContentLoaded', e => {
         document.querySelector('#stdout > pre code').innerText = res.stdout
         document.querySelector('#stderr > pre code').innerText = res.stderr
         nstarEditor.setValue(res.nstar)
+
+        // TODO:
+        // - show dialog box if `res.fail` is `true`
       })
       .catch(err => { alert(err.message) })
-      .finally(()=> { restoreState() })
-    // TODO:
-    // - set N* output
+      .finally(() => { restoreState() })
 
     return true
   })
@@ -121,7 +122,7 @@ document.addEventListener('DOMContentLoaded', e => {
     autocomplete: false,
   })
   nstarEditor = CodeMirror(document.querySelector('#nstar-editor'), {
-    mode: "haskell",
+    mode: "nstar",
     lineNumbers: true,
     indentUnit: 2,
     tabSize: 2,

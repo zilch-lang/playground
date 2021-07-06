@@ -39,9 +39,7 @@ readFile transformPath path = do
     fileExists <- FS.exists path
 
     if fileExists
-    then do
-      liftEffect $ Console.log $ "Reading: " <> path
-      Just <$> FS.readFile path
+    then Just <$> FS.readFile path
     else do
       liftEffect $ Console.warn $ "File not found:" <> path
       pure Nothing
