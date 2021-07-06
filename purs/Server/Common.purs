@@ -7,7 +7,7 @@ import Data.Traversable (traverse)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Aff (Aff)
-import Node.Encoding as Encoding
+import Node.Buffer (Buffer)
 import Node.FS.Aff as FS
 import Partial.Unsafe (unsafePartial)
 import Pathy (currentDir, parseRelDir, parseRelFile, posixParser, (</>), rootDir, sandbox, printPath, posixPrinter)
@@ -19,7 +19,7 @@ import Prelude
 --   The path must be a non-empty array of path elements.
 --
 --   Returns `Nothing` if file is not found, else `Just content`
-readFile :: (Array String -> Array String) -> Array String -> Aff (Maybe String)
+readFile :: (Array String -> Array String) -> Array String -> Aff (Maybe Buffer)
 readFile transformPath path = do
   let cwd = currentDir
   let newPath = transformPath path
@@ -39,7 +39,9 @@ readFile transformPath path = do
     fileExists <- FS.exists path
 
     if fileExists
-    then Just <$> FS.readTextFile Encoding.UTF8 path
+    then do
+      liftEffect $ Console.log $ "Reading: " <> path
+      Just <$> FS.readFile path
     else do
       liftEffect $ Console.warn $ "File not found:" <> path
       pure Nothing

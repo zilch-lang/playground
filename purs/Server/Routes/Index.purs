@@ -7,4 +7,4 @@ import Node.FS.Aff as FS
 import Prelude
 
 runRoute :: HTTPure.ResponseM
-runRoute = FS.readTextFile Encoding.UTF8 "./html/index.html" >>= HTTPure.ok
+runRoute = FS.readFile "./html/index.html" >>= HTTPure.ok
