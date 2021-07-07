@@ -1,6 +1,5 @@
 :root {
     --tab-bar-height: 32px;
-    --tab-bar-margin: 5px;
 }
 
 html, body {
@@ -19,8 +18,7 @@ html, body {
 }
 
 #tabs {
-    padding: var(--tab-bar-margin);
-    min-height: calc(var(--tab-bar-height) + 2 * var(--tab-bar-margin));
+    min-height: calc(var(--tab-bar-height));
 
     transition: background-color .1s ease-in;
 }
@@ -48,10 +46,6 @@ div > a#run {
 .CodeMirror-lines {
     margin-left: 4px;
     margin-right: 4px;
-}
-
-#editor-view {
-    margin-right: 5px;
 }
 
 .tab-padding3 {
