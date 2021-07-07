@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', e => {
   })
 
   zilchEditor = CodeMirror(document.querySelector('#zilch-editor'), {
-    mode: "haskell",
+    mode: "zilch",
     lineNumbers: true,
     indentUnit: 2,
     tabSize: 2,
