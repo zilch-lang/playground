@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', e => {
       tabbar.classList.toggle('bg-purple')
       tabbar.classList.toggle('bg-dark-gray')
 
+      let headerHeight = document.querySelector('#nstar-editor-wrapper > div:first-child > div:first-child').clientHeight
+      let nstarEditor_ = document.querySelector('#nstar-editor')
+
+      nstarEditor_.style.setProperty('--local-remove-height', `${headerHeight}px`)
+      nstarEditor_.classList.add('rem-some')
       nstarEditor.refresh()
     }
 
@@ -103,7 +108,7 @@ document.addEventListener('DOMContentLoaded', e => {
     const editorMode = darkMode ? 'xq-light' : 'nord'
     zilchEditor.setOption('theme', editorMode)
     nstarEditor.setOption('theme', editorMode);
-    ['#code-editor-tab', '#debug-tab'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
+    ['#code-editor-tab', '#debug-tab', '#nstar-editor-wrapper', '#program-output'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
     Array.prototype.map.call(document.querySelectorAll('.divider'), e => ['black-70', 'white-70'].map(c => e.classList.toggle(c)))
     Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'));
     ['#stdout > pre', '#stderr > pre'].map(e => ['white', 'black'].map(c => document.querySelector(e).classList.toggle(c)))
@@ -133,13 +138,12 @@ document.addEventListener('DOMContentLoaded', e => {
     autocomplete: false,
   })
 
-  split = Split({
-    minSize: 200,
-    rowGutters: [{
-      track: 1,
-      element: document.querySelector('.gutter-debug-tab'),
-    }],
-    expandToMin: true,
+  split = Split(['#nstar-editor-wrapper', '#program-output'], {
+    snapOffset: 0,
+    direction: 'vertical',
+    onDragEnd: function (sizes) {
+      nstarEditor.refresh()
+    }
   })
 
   // setup the dark mode on loading
@@ -150,11 +154,13 @@ document.addEventListener('DOMContentLoaded', e => {
   (darkMode ? ['gray', 'bg-near-white'] : ['near-white', 'bg-gray']).map(c => colorToggle.classList.toggle(c))
   colorToggle.querySelector('i').classList.toggle(darkMode ? 'fa-sun' : 'fa-moon')
   if (darkMode) {
-    ['#code-editor-tab', '#debug-tab'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
+    ['#code-editor-tab', '#debug-tab', '#nstar-editor-wrapper', '#program-output'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
   }
   Array.prototype.map.call(document.querySelectorAll('.divider'), e => e.classList.toggle(darkMode ? 'white-70' : 'black-70'))
   if (darkMode) {
     Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'))
   }
   ['#stdout > pre', '#stderr > pre'].map(e => document.querySelector(e).classList.toggle(darkMode ? 'white' : 'black'))
+
+  zilchEditor.focus()
 }, false);

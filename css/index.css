@@ -84,7 +84,7 @@ div > a#run {
     pointer-events: none;
 }
 
-#zilch-editor, #nstar-editor, .CodeMirror-linenumbers {
+#zilch-editor, #nstar-editor, .CodeMirror-linenumbers, .CodeMirror-wrap {
     font-family: 'Source Code Pro', monospace !important;
     font-size: 14px !important;
     font-weight: 400 !important;
@@ -94,7 +94,7 @@ div > a#run {
     tab-size: 2;
 }
 
-#zilch-editor, #debug-tab > div, .CodeMirror-linenumbers {
+#zilch-editor, #debug-tab > div > div, .CodeMirror-linenumbers {
     padding: 5px;
 }
 
@@ -106,36 +106,19 @@ div > a#run {
     transition: color .1s ease-in;
 }
 
-.grid-col2 {
-    display: grid;
-    grid-template-columns: 1fr 10px 1fr;
-}
-
-.grid-row2 {
-    display: grid;
-    grid-template-rows: 1fr 10px 1fr;
-}
-
-.gutter-row {
-    grid-column: 1/-1;
-    cursor: row-resize;
-}
-
-.gutter-row-2 {
-    grid-row: 2;
-}
-
-.gutter-col {
-    grid-row: 1/-1;
-    cursor: col-resize;
-}
-
-.gutter-col-2 {
-    grid-column: 2;
-}
-
 .gutter.dark-gutter {
     background-color: #232830;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
 }
 
 .gutter {
@@ -194,7 +177,7 @@ code {
 
 
 
-.CodeMirror-wrap, .CodeMirror-linenumbers, .CodeMirror-gutter, .divider, .gutter {
+.CodeMirror-wrap, .CodeMirror-linenumbers, .CodeMirror-gutter, .gutter {
     transition: background .1s ease-in;
 }
 
@@ -204,4 +187,16 @@ code {
 
 .curna {
     cursor: not-allowed !important;
+}
+
+#nstar-editor-wrapper {
+    overflow: auto;
+}
+
+.rem-some {
+    height: calc(100% - var(--local-remove-height)) !important;
+}
+
+.cm-s-nord .CodeMirror-gutters {
+    border-right: 1px solid #4e586e !important;
 }
