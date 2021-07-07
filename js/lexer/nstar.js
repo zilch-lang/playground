@@ -7,14 +7,11 @@
     const registers = /%r[0-5]\b/u
     const instruction = /^(jmp|call|ret|s?ld|s?st|salloc|sfree|sref|mv|nop)$/iu
 
-    function tokenizeStringChar(stream) {
-      stream.eat("\\")
-      stream.eat(/./u)
-    }
+    const tokenizeStringChar = (stream) => (stream.eat("\\"), stream.eat(/./u))
 
     function tokenizeString(stream) {
       if (!stream.eat('"'))
-        return ""
+        return null
 
       let end
       while (!stream.eol() && !(end = stream.eat('"'))) {
@@ -26,21 +23,19 @@
 
     function tokenizeCharacter(stream) {
       if (!stream.eat("'"))
-        return ""
+        return null
 
       tokenizeStringChar(stream)
 
-      if (!stream.eat("'"))
-        return "string error"
-      return "string"
+      return stream.eat("'") ? "string" : "string error"
     }
 
     function tokenizeInstruction(stream) {
       let res
       if (!(res = stream.match(/[a-z_][a-z0-9_]*/i, true)))
-        return ""
+        return null
 
-      return instruction.test(res) ? "header" : ""
+      return instruction.test(res) ? "header" : null
     }
 
     function tokenizeNumber(stream) {
@@ -59,48 +54,25 @@
       } else if (stream.eatWhile(/[0-9]/)) {
         return "number"
       } else {
-        return ""
+        return null
       }
     }
 
-    function tokenizeRegister(stream) {
-      return stream.match(registers, true) && "attribute"
-    }
+    const tokenizeRegister = (stream) => stream.match(registers, true) && "attribute"
+    const tokenizeType = (stream) => stream.match(builtinTypes, true) && "type"
+    const tokenizeKeyword = (stream) => stream.match(keywords, true) && "keyword"
+    const tokenizeComment = (stream) => stream.eat("#") && (stream.skipToEnd(), "comment")
 
-    function tokenizeType(stream) {
-      return stream.match(builtinTypes, true) && "type"
-    }
-
-    function tokenizeKeyword(stream) {
-      return stream.match(keywords, true) && "keyword"
-    }
-
-    function tokenizeComment(stream) {
-      return stream.eat("#") && (stream.skipToEnd(), "comment")
-    }
-
-    function token(stream) {
-      let tokenType
-
-      if (tokenType = tokenizeComment(stream))
-        return tokenType
-      if (tokenType = tokenizeCharacter(stream))
-        return tokenType
-      if (tokenType = tokenizeString(stream))
-        return tokenType
-      if (tokenType = tokenizeKeyword(stream))
-        return tokenType
-      if (tokenType = tokenizeType(stream))
-        return tokenType
-      if (tokenType = tokenizeRegister(stream))
-        return tokenType
-      if (tokenType = tokenizeInstruction(stream))
-        return tokenType
-      if (tokenType = tokenizeNumber(stream))
-        return tokenType
-
-      return stream.next(), null
-    }
+    const token = (stream) =>
+          tokenizeComment(stream)
+          || tokenizeCharacter(stream)
+          || tokenizeString(stream)
+          || tokenizeKeyword(stream)
+          || tokenizeType(stream)
+          || tokenizeRegister(stream)
+          || tokenizeInstruction(stream)
+          || tokenizeNumber(stream)
+          || (stream.next(), null)
     
     return {
       token,
