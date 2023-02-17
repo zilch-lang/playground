@@ -36,10 +36,11 @@ readFile transformPath path = do
 
   flip (maybe $ pure Nothing) path $ \ p -> do
     let path = "." <> p
-    fileExists <- FS.exists path
+    -- fileExists <- FS.exists path
 
-    if fileExists
-    then Just <$> FS.readFile path
-    else do
-      liftEffect $ Console.warn $ "File not found:" <> path
-      pure Nothing
+    Just <$> FS.readFile path
+    -- if fileExists
+    -- then Just <$> FS.readFile path
+    -- else do
+    --   liftEffect $ Console.warn $ "File not found:" <> path
+    --   pure Nothing

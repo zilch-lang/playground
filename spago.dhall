@@ -21,7 +21,6 @@
   , "pathy"
   , "posix-types"
   , "prelude"
-  , "psci-support"
   , "transformers"
   , "tuples"
   , "uuid"

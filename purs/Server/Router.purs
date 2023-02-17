@@ -21,5 +21,7 @@ serverRouter _ { method: HTTPure.Get, path }
   | path !@ 0 == "png"     = PNG.runRoute path
   | path !@ 0 == "ico"     = ICO.runRoute path
 serverRouter cli { method: HTTPure.Post, path, body }
-  | path !@ 0 == "compile" = Compile.runRoute cli body
+  | path !@ 0 == "compile" = do
+    body <- HTTPure.toString body
+    Compile.runRoute cli body
 serverRouter _ _           = HTTPure.notFound

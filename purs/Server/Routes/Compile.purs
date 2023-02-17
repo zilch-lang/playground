@@ -64,7 +64,8 @@ compileCode { gzcExe, gccExe, outDir } body = do
   startProcess gccExe ["--output", file_out, file_o] compileOptions
     \ _ -> lift2 $ apathize $ FS.unlink file_o
 
-  startProcess file_out [] execOptions
+  -- TODO: use tools such as firejail here to sandbox the executable
+  startProcess "firejail" (firejailArgs <> ["--", file_out]) execOptions
     \ _ -> lift2 $ apathize $ FS.unlink file_out
 
   pure unit
@@ -77,6 +78,21 @@ compileCode { gzcExe, gccExe, outDir } body = do
       { timeout   = Just 60.0     -- 1 minute
       , maxBuffer = Just 26214400 -- 25 MiB
       }
+
+
+firejailArgs :: Array String
+firejailArgs =
+  [ "--caps.drop=all"
+  , "--no-root"
+  , "--private"
+  , "--restrict-namespaces"
+  , "--rlimit-as=1g"
+  , "--rlimit-fsize=0k"
+  , "--rlimit-nofile=0"
+  , "--rlimit-nproc=0"
+  , "--seccomp"
+  , "--timeout=00:10:00"
+  ]
 
 
 -- | Starts a process given its name/path, its arguments, some execution options and a function to call on command completion.

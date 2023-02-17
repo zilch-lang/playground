@@ -3,7 +3,7 @@ module Server (runServer) where
 import Ansi.Codes (Color(..)) as ANSI
 import Ansi.Output (bold, foreground, underline, withGraphics) as ANSI
 import CLI (CLI)
-import Effect.Aff (launchAff_)
+import Effect.Aff (launchAff_, apathize)
 import Effect.Console as Console
 import HTTPure as HTTPure
 import Node.FS.Aff as FS
@@ -20,7 +20,7 @@ runServer cli@{ port, outDir, gzcExe, gccExe } =
     Console.log $ "- output directory:  " <> ANSI.withGraphics (ANSI.foreground ANSI.Blue) outDir
     Console.log $ "- port:              " <> ANSI.withGraphics (ANSI.foreground ANSI.Blue) (show port)
 
-    launchAff_ do
-      outExists <- FS.exists outDir
-      unless outExists do
-        FS.mkdir outDir
+    launchAff_ $ apathize do
+      FS.mkdir outDir
+      -- outExists <- FS.exists outDir
+      -- unless outExists do
