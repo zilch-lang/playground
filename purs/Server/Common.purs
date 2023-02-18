@@ -1,17 +1,20 @@
 module Server.Common where
 
+import Prelude
+
 import Data.Array as Array
+import Data.Either (either)
 import Data.Foldable (foldl)
 import Data.Maybe (fromJust, Maybe(..), maybe)
 import Data.Traversable (traverse)
+import Effect.Aff (Aff, attempt)
 import Effect.Class (liftEffect)
+import Effect.Console (infoShow, warnShow)
 import Effect.Console as Console
-import Effect.Aff (Aff)
 import Node.Buffer (Buffer)
 import Node.FS.Aff as FS
 import Partial.Unsafe (unsafePartial)
 import Pathy (currentDir, parseRelDir, parseRelFile, posixParser, (</>), rootDir, sandbox, printPath, posixPrinter)
-import Prelude
 
 -- | Transforms a path according to the first function, and tries to read the file given
 --   by prepending the current path.
@@ -38,6 +41,7 @@ readFile transformPath path = do
     let path = "." <> p
     -- fileExists <- FS.exists path
 
+    path <- FS.realpath path
     Just <$> FS.readFile path
     -- if fileExists
     -- then Just <$> FS.readFile path

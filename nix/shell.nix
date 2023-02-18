@@ -8,5 +8,6 @@ pkgs.mkShell {
     nodejs
     nodePackages.npm
     firejail
+    nodePackages.browserify
   ];
 }
