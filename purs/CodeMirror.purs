@@ -1,7 +1,8 @@
-module CodeMirror (Modifier (..), StreamParser (..), StringStream, pos, start, string, indentUnit, eol, sol, peek, next, eat, eatWhile, eatSpace, skipToEnd, skipTo, backUp, column, indentation, match, current, fromParser) where
+module CodeMirror (Modifier (..), StreamParser (..), StringStream, pos, start, string, indentUnit, eol, sol, peek, next, eat, eatWhile, eatSpace, skipToEnd, skipTo, backUp, column, indentation, match, match', current, fromParser) where
   
 import Control.Monad
 
+import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Function (($))
 import Data.Function.Uncurried (Fn2, mkFn2)
 import Data.Maybe (Maybe(..))
@@ -101,6 +102,7 @@ data Modifier
   | Local Modifier
   | Special Modifier
   | Error
+  | Custom String
 
 instance showModifier :: Show Modifier where
   show Comment = "comment"
@@ -188,6 +190,7 @@ instance showModifier :: Show Modifier where
   show (Local m) = show m <> ".local"
   show (Special m) = show m <> ".special"
   show Error = "error"
+  show (Custom t) = t
 
 type StreamParser (st :: Type) = { name :: String, token :: StringStream -> st -> Effect (Nullable (Array Modifier)) }
 
@@ -222,6 +225,7 @@ foreign import backUpImpl :: Number -> StringStream -> StringStream
 foreign import columnImpl :: StringStream -> Number
 foreign import indentationImpl :: StringStream -> Number
 foreign import matchImpl :: Regex -> Boolean -> Boolean -> StringStream -> Pair -> Tuple StringStream Boolean
+foreign import match_Impl :: Regex -> Boolean -> Boolean -> StringStream -> Just -> Nothing -> Pair -> Tuple StringStream (Maybe String)
 foreign import currentImpl :: StringStream -> String
 
 ----------------------------------------------------
@@ -276,6 +280,9 @@ indentation = indentationImpl
 
 match :: Regex -> Boolean -> Boolean -> StringStream -> Tuple StringStream Boolean
 match rg consume caseInsensitive st = matchImpl rg consume caseInsensitive st Tuple
+
+match' :: Regex -> Boolean -> Boolean -> StringStream -> Tuple StringStream (Maybe String)
+match' rg consume caseInsensitive st = match_Impl rg consume caseInsensitive st Just Nothing Tuple
 
 current :: StringStream -> String
 current = currentImpl

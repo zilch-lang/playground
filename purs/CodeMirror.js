@@ -35,6 +35,16 @@ export const matchImpl = rg => consume => caseInsensitive => st => pair => {
   return pair(st)(eaten)
 }
 
+export const match_Impl = rg => consume => caseInsensitive => st => just => nothing => pair => {
+	let eaten = st.match(rg, consume, caseInsensitive)
+	if (eaten === null)
+	  return pair(st)(nothing)
+	else if (typeof(eaten) === "object")
+	  return pair(st)(just(eaten[0]))
+	else
+	  return pair(st)(nothing)
+}
+
 export const nextImpl = st => just => nothing => pair => {
   let eaten = st.next()
   if (eaten === undefined)

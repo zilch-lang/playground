@@ -10,7 +10,7 @@ import Control.Monad.Error.Class (class MonadThrow, liftEither)
 import Data.Boolean (otherwise)
 import Data.Either (Either(..))
 import Data.Function (identity, ($))
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import Data.Monoid (mempty, (<>))
 import Data.Nullable (Nullable, null, toNullable)
 import Data.String.Regex (Regex, regex)
@@ -42,7 +42,7 @@ tokenizeBuiltin st = do
   Tuple st matched <- pure $ match builtins true false st
   pure
     if matched
-    then Tuple st (Just [Keyword])
+    then Tuple st (Just [Standard TypeName])
     else Tuple st Nothing
 
 tokenizeKeyword :: StringStream -> Either String (Tuple StringStream (Maybe (Array Modifier)))
@@ -72,11 +72,17 @@ tokenizeIdentifier st = do
     then Tuple st (Just [VariableName])
     else Tuple st Nothing
 
-tokenizeStringChar :: StringStream -> Either String StringStream
+tokenizeStringChar :: StringStream -> Either String (Tuple StringStream (Maybe String))
 tokenizeStringChar st = do
-  backslashOrAny <- regex "(\\\\)?." unicode
-  Tuple st _ <- pure $ eat backslashOrAny st
-  pure st
+  backslash <- regex "\\\\" unicode
+  Tuple st b1 <- pure $ eat backslash st
+  Tuple st c <- pure $ next st
+  pure $ Tuple st (concat b1 c)
+  where
+    concat Nothing Nothing = Nothing
+    concat (Just _) Nothing = Nothing
+    concat Nothing (Just c) = Just c
+    concat (Just b) (Just c) = Just (b <> c)
 
 tokenizeString :: StringStream -> Either String (Tuple StringStream (Maybe (Array Modifier)))
 tokenizeString st = do
@@ -98,7 +104,7 @@ tokenizeString st = do
         case hasEnd of
           Just _ -> pure $ Tuple st true
           Nothing -> do
-            st <- tokenizeStringChar st
+            Tuple st _ <- tokenizeStringChar st
             tryTokenizeStringInside guillemot st
 
 tokenizeCharacter :: StringStream -> Either String (Tuple StringStream (Maybe (Array Modifier)))
@@ -108,11 +114,15 @@ tokenizeCharacter st = do
   case eaten of
     Nothing -> pure $ Tuple st Nothing
     Just _ -> do
-      st <- tokenizeStringChar st
-      Tuple st eaten <- pure $ eat guilsing st
+      Tuple st eaten <- tokenizeStringChar st
       case eaten of
         Nothing -> pure $ Tuple st (Just [String, Error])
-        Just _ -> pure $ Tuple st (Just [String])
+        Just "'" -> pure $ Tuple st (Just [String, Error])
+        Just _ -> do
+          Tuple st eaten <- pure $ eat guilsing st
+          case eaten of
+            Nothing -> pure $ Tuple st (Just [String, Error])
+            Just _ -> pure $ Tuple st (Just [String])
 
 tokenizeNumber :: StringStream -> Either String (Tuple StringStream (Maybe (Array Modifier)))
 tokenizeNumber st = do
