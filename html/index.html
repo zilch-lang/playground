@@ -19,23 +19,42 @@
     </head>
     <body class="flex flex-column">
         <div id="tabs" class="bg-purple flex flex-wrap items-center pa1">
-            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9 ffos mr2 ml1">
+            <a id="editor-view" class="f6 link dim br1 ph3 pv2 dib white bg-purple inline-flex items-center tc br2 fw9 ffos mr2 ml1 pointer">
                 <i class="fas fa-keyboard dib npe"></i>
                 <span class="f6 ml2 npe">EDITOR</span>
             </a>
-            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9 ffos">
+            <a id="compiler-view" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9 ffos pointer">
                 <i class="fas fa-microchip dib npe" aria-hidden="true"></i>
                 <span class="f6 ml2 npe">OUTPUT</span>
             </a>
             <div class="tab-padding2"></div>
-            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9 ffos">
+            <a id="run" class="f6 link dim br1 ph3 pv2 dib white bg-dark-green inline-flex items-center tc br2 fw9 ffos pointer">
                 <i class="fas fa-play-circle dib npe"></i>
                 <span class="f6 ml2 npe">RUN</span>
             </a>
-            <a id="settings" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9 ffos ml2">
-							<i class="fas fa-cog dib npe"></i>
-            </a>
-            <a id="toggle-dark" class="f6 link dim br1 ph3 pv2 dib inline-flex items-center tc br2 fw9 ffos ml2 mr1">
+            <div id="settings-dropdown" class="fl overflow-hidden">
+              <a id="settings" class="f6 link dim br1 ph3 pv2 dib white bg-dark-gray inline-flex items-center tc br2 fw9 ffos ml2 pointer">
+  							<i class="fas fa-cog dib npe"></i>
+              </a>
+              <div id="settings-dropdown-content" class="db absolute pa3 z-0 shadow-1 br2 o-0 black ffos light-menu">
+								<label for="compiler-options" class="f6 b db mb2">Compiler options</label>
+								<input type="text" id="compiler-options" class="input-reset ba b--black-20 pa2 mb2 db w-100 ffos bg-inherit color-inherit">
+								<label for="stdin" class="f6 b db mb2">Standard input</label>
+								<input type="text" id="stdin" class="input-reset ba b--black-20 pa2 mb2 db w-100 ffos bg-inherit color-inherit">
+      					<fieldset class="bn bw-0 mb0 pa0">
+									<legend class="b mb2 f6 db">Output</legend>
+                  <div class="flex items-center mb2">
+                    <input class="mr2" type="checkbox" id="dump-tast">
+                    <label for="dump-tast" class="lh-copy">Dump typed AST</label>
+                  </div>
+                  <div class="flex items-center mb2">
+                    <input class="mr2" type="checkbox" id="dump-anf">
+                    <label for="dump-anf" class="lh-copy">Dump A-Normal Form</label>
+                  </div>
+      					</fieldset>
+              </div>
+            </div>
+            <a id="toggle-dark" class="f6 link dim br1 ph3 pv2 dib inline-flex items-center tc br2 fw9 ffos ml2 mr1 pointer">
                 <i class="fas dib npe"></i>
             </a>
         </div>

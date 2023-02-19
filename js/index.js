@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', e => {
   let tabbar = document.querySelector('#tabs')
   let colorToggle = document.querySelector('#toggle-dark')
   let runButton = document.querySelector('#run')
+  let settingsButton = document.querySelector('#settings')
+
+  let dropdown = document.querySelector('#settings-dropdown-content');
 
   let editorTab = document.querySelector('#code-editor-tab')
   let debugTab = document.querySelector('#debug-tab')
@@ -51,6 +54,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
     return true
   })
+  
   runButton.addEventListener('click', e => {
     if (runButton.disabled)
       return false
@@ -111,7 +115,27 @@ document.addEventListener('DOMContentLoaded', e => {
     ['#code-editor-tab', '#debug-tab', '#nstar-editor-wrapper', '#program-output'].map(e => document.querySelector(e).classList.toggle('cm-s-nord'))
     Array.prototype.map.call(document.querySelectorAll('.divider'), e => ['black-70', 'white-70'].map(c => e.classList.toggle(c)))
     Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'));
-    ['#stdout > pre', '#stderr > pre'].map(e => ['white', 'black'].map(c => document.querySelector(e).classList.toggle(c)))
+    ['#stdout > pre', '#stderr > pre'].map(e => ['white', 'black'].map(c => document.querySelector(e).classList.toggle(c)));
+    ['black', 'white', 'light-menu', 'dark-menu'].map(c => dropdown.classList.toggle(c));
+  	['#compiler-options', '#stdin'].map(id => ['b--black-20', 'b--white-20'].map(c => document.querySelector(id).classList.toggle(c)))
+
+    return true
+  })
+
+  const settingsClickCanceller = e => {
+    if (e.target.matches('#settings-dropdown-content') || e.target.matches('#settings-dropdown-content *')) {
+      return false
+    }
+
+		e.preventDefault();
+    ['z-1', 'z-0', 'o-0', 'o-100'].map(c => dropdown.classList.toggle(c))
+    document.removeEventListener('click', settingsClickCanceller)
+    return true
+  }
+  settingsButton.addEventListener('click', e => {
+    ['z-1', 'z-0', 'o-0', 'o-100'].map(c => dropdown.classList.toggle(c))
+
+    setTimeout(() => document.addEventListener('click', settingsClickCanceller), 1)
 
     return true
   })
@@ -161,6 +185,10 @@ document.addEventListener('DOMContentLoaded', e => {
     Array.prototype.map.call(document.querySelectorAll('.gutter'), e => e.classList.toggle('dark-gutter'))
   }
   ['#stdout > pre', '#stderr > pre'].map(e => document.querySelector(e).classList.toggle(darkMode ? 'white' : 'black'))
+  if (darkMode) {
+  	['black', 'white', 'light-menu', 'dark-menu'].map(c => dropdown.classList.toggle(c));
+  	['#compiler-options', '#stdin'].map(id => ['b--black-20', 'b--white-20'].map(c => document.querySelector(id).classList.toggle(c)))
+  }
 
   zilchEditor.focus()
 }, false);

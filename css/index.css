@@ -23,9 +23,9 @@ html, body {
     transition: background-color .1s ease-in;
 }
 
-#tabs > a {
+/* #tabs > a {
     cursor: pointer;
-}
+} */
 
 div > a#run {
     margin-left: auto;
@@ -193,4 +193,19 @@ code {
 
 .cm-s-nord .CodeMirror-gutters {
     border-right: 1px solid #4e586e !important;
+}
+
+
+
+#settings-dropdown-content {
+    width: calc(min(400px, 95vh));
+    transform: translateY(12px) translateX(-100%) translateX(54px); /* TODO: remove hardcoded values */
+    transition: opacity .15s ease-in;
+}
+
+.light-menu {
+  background-color: #fff;
+}
+.dark-menu {
+  background-color: #2e3440;
 }
