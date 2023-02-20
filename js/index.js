@@ -189,6 +189,6 @@ document.addEventListener('DOMContentLoaded', e => {
   	['black', 'white', 'light-menu', 'dark-menu'].map(c => dropdown.classList.toggle(c));
   	['#compiler-options', '#stdin'].map(id => ['b--black-20', 'b--white-20'].map(c => document.querySelector(id).classList.toggle(c)))
   }
-
+  
   zilchEditor.focus()
 }, false);
